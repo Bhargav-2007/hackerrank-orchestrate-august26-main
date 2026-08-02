@@ -1,10 +1,19 @@
 Message Notification Router Evaluation
 ================================================
 Messages evaluated: 30
-Action accuracy vs sample: 73.33%
-Message type accuracy vs sample: 56.67%
+Balanced action accuracy vs sample: 73.33%
+Balanced message type accuracy vs sample: 56.67%
+
+Profile comparison:
+- balanced: action=73.33%, type=56.67%, avg_conf=0.96
+- conservative: action=60.00%, type=56.67%, avg_conf=0.95
+- recall: action=73.33%, type=56.67%, avg_conf=0.96
 
 Action distribution:
 - notify: 8
 - digest: 13
 - mute: 9
+
+Decision note:
+- Production predictions use the balanced profile.
+- Conservative and recall-biased variants are kept for analysis and calibration only.

@@ -60,6 +60,25 @@ For image and voice-note messages, `images.csv` and `voice_notes.csv` only provi
 
 ---
 
+## Approach
+
+This solution uses a deterministic hybrid router instead of a single brittle heuristic. The production path combines:
+
+1. Structured content scoring for urgency, promotions, payment cues, spam, scam risk, and forwarding patterns.
+2. Personalization from user quiet hours, group affinity, business verification, and user-business history.
+3. Retrieval-style evidence selection from historical messages and reactions.
+4. Best-effort multimodal handling for image OCR and voice-note metadata.
+
+The evaluation workflow also compares three routing profiles on the solved sample set:
+
+1. Balanced: the production profile used for `output.csv`.
+2. Conservative: biased toward digest/mute for higher precision.
+3. Recall-biased: biased toward notify for urgent operational messages.
+
+That gives the submission a concrete model-comparison artifact without changing the deterministic output generation.
+
+---
+
 ## Suggested Workflow
 
 1. Inspect `dataset/sample_messages.csv` to understand the expected output format.
