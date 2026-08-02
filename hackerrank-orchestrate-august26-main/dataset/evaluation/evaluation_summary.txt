@@ -1,0 +1,10 @@
+Message Notification Router Evaluation
+================================================
+Messages evaluated: 30
+Action accuracy vs sample: 73.33%
+Message type accuracy vs sample: 56.67%
+
+Action distribution:
+- notify: 8
+- digest: 13
+- mute: 9

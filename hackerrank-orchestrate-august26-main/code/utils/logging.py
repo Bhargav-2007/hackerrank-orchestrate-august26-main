@@ -1,48 +1,42 @@
-"""
-Logging utility for the Message Notification Router.
-Sets up logging to both console and file as required by AGENTS.md.
-"""
-
+"""Logging configuration compliant with AGENTS.md"""
 import logging
 import os
-from pathlib import Path
+from datetime import datetime
 
-def setup_logging():
-    """Set up logging configuration."""
-    # Create logs directory if it doesn't exist
-    log_dir = Path.home() / "hackerrank_orchestrate_august26"
-    log_dir.mkdir(exist_ok=True)
-    
-    log_file = log_dir / "agent.log"
-    
-    # Configure logging
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        handlers=[
-            logging.FileHandler(log_file),
-            logging.StreamHandler()
-        ]
-    )
-    
-    # Also log to the mandatory chat transcript log as per AGENTS.md
-    transcript_log = log_dir / "log.txt"
-    # We'll handle the transcript logging in the main agent loop, but we can also set up a separate handler if needed.
-    # For now, we'll just note that the main agent must log to that file.
-    # We'll create a separate logger for the transcript if needed, but the main agent will handle it.
-    
-    # Log the start of the session
-    logging.info("Logging initialized")
+# Create logs directory if it doesn't exist
+logs_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'logs')
+os.makedirs(logs_dir, exist_ok=True)
 
-def log_transcript(message: str):
-    """Log a message to the transcript log file as required by AGENTS.md."""
-    log_dir = Path.home() / "hackerrank_orchestrate_august26"
-    log_dir.mkdir(exist_ok=True)
-    transcript_log = log_dir / "log.txt"
+# Log file path - fixed name as required
+log_file = os.path.join(logs_dir, 'log.txt')
+
+# Configure logger
+logger = logging.getLogger('notification_router')
+logger.setLevel(logging.DEBUG)
+
+# Prevent duplicate handlers
+if not logger.handlers:
+    # File handler
+    file_handler = logging.FileHandler(log_file, mode='w')  # Overwrite each run
+    file_handler.setLevel(logging.DEBUG)
+    file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(file_formatter)
     
-    from datetime import datetime
-    timestamp = datetime.now().isoformat()
-    log_entry = f"## [{timestamp}] {message}\n"
+    # Console handler
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)  # INFO level for console to reduce noise
+    console_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    console_handler.setFormatter(console_formatter)
     
-    with open(transcript_log, "a", encoding="utf-8") as f:
-        f.write(log_entry)
+    logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
+
+# Export the logger for use in other modules
+def get_logger(name: str = None):
+    """Get a logger instance"""
+    if name:
+        return logging.getLogger(f'notification_router.{name}')
+    return logger
+
+# For backward compatibility
+setup_logger = get_logger
